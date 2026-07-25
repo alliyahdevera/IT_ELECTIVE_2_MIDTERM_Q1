@@ -1,62 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicPlaylist.Models;
+using MusicPlaylistMvc.Services;
 
-namespace MusicPlaylist.Controllers
+namespace MusicPlaylistMvc.Controllers
 {
-    public class AccountController : Controller
+    public class ProfileController : Controller
     {
-        [HttpGet]
-        public IActionResult Login()
+        private readonly AppDataService _appData;
+
+        public ProfileController(AppDataService appData)
         {
-            return View();
+            _appData = appData;
         }
 
-        [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        [HttpGet]
+        public IActionResult Index()
         {
-            if (!ModelState.IsValid)
+            int? profileId =
+                HttpContext.Session.GetInt32("ProfileId");
+
+            if (profileId == null)
             {
-                return View(model);
+                return RedirectToAction("Login", "Account");
             }
 
-            var profile = _appData.Profiles.FirstOrDefault(item =>
-                item.Username == model.Username &&
-                item.Password == model.Password);
+            UserProfile? profile =
+                _appData.Profiles.FirstOrDefault(item =>
+                    item.ProfileId == profileId.Value);
 
             if (profile == null)
             {
-                ModelState.AddModelError(
-                    string.Empty,
-                    "Invalid username or password."
-                );
+                HttpContext.Session.Clear();
 
-                return View(model);
+                return RedirectToAction("Login", "Account");
             }
 
-            HttpContext.Session.SetInt32(
-                "ProfileId",
-                profile.ProfileId
-            );
+            int playlistCount =
+                _appData.PlaylistItems.Count(item =>
+                    item.ProfileId == profileId.Value);
 
-            HttpContext.Session.SetString(
-                "ProfileName",
-                profile.FullName
-            );
+            ViewBag.PlaylistCount = playlistCount;
 
-            return RedirectToAction(
-                "Index",
-                "Home"
-            );
-        }
-        [HttpPost]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-
-            return RedirectToAction(
-                "Login",
-                "Account"
-            );
+            return View(profile);
         }
     }
 }

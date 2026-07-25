@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using MusicPlaylist.Models;
 using MusicPlaylistMvc.Services;
 
-namespace MusicPlaylistMvc.Controllers
+namespace MusicPlaylist.Controllers
 {
     public class PlaylistController : Controller
     {
@@ -24,11 +25,12 @@ namespace MusicPlaylistMvc.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var playlist = _appData.PlaylistItems
-                .Where(item =>
-                    item.ProfileId == profileId.Value)
-                .OrderByDescending(item => item.DateAdded)
-                .ToList();
+            List<PlaylistItem> playlist =
+                _appData.PlaylistItems
+                    .Where(item =>
+                        item.ProfileId == profileId.Value)
+                    .OrderByDescending(item => item.DateAdded)
+                    .ToList();
 
             return View(playlist);
         }
@@ -90,29 +92,38 @@ namespace MusicPlaylistMvc.Controllers
                 return View(item);
             }
 
+            string normalizedYouTubeUrl =
+                $"https://www.youtube.com/watch?v={videoId}";
+
+            string embedUrl =
+                $"https://www.youtube.com/embed/{videoId}";
+
+            string thumbnailUrl =
+                $"https://img.youtube.com/vi/{videoId}/hqdefault.jpg";
+
             item.ProfileId = profileId.Value;
             item.VideoId = videoId;
-            item.YouTubeUrl =
-                $"https://www.youtube.com/watch?v={videoId}";
-            item.EmbedUrl =
-                $"https://www.youtube.com/embed/{videoId}";
+            item.Title = item.Title.Trim();
+            item.YouTubeUrl = normalizedYouTubeUrl;
+            item.EmbedUrl = embedUrl;
+            item.ThumbnailUrl = thumbnailUrl;
             item.DateAdded = DateTime.Now;
 
             _appData.PlaylistItems.Add(item);
 
-            // Add one global copy for the Home Top 5.
-            bool globalSongExists =
-                _appData.MusicVideos.Any(song =>
+            MusicVideo? globalSong =
+                _appData.MusicVideos.FirstOrDefault(song =>
                     song.VideoId == videoId);
 
-            if (!globalSongExists)
+            if (globalSong == null)
             {
                 _appData.MusicVideos.Add(new MusicVideo
                 {
                     VideoId = videoId,
                     Title = item.Title,
-                    YouTubeUrl = item.YouTubeUrl,
-                    EmbedUrl = item.EmbedUrl,
+                    YouTubeUrl = normalizedYouTubeUrl,
+                    EmbedUrl = embedUrl,
+                    ThumbnailUrl = thumbnailUrl,
                     PlayCount = 0
                 });
             }
@@ -135,7 +146,15 @@ namespace MusicPlaylistMvc.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var playlistItem =
+            if (string.IsNullOrWhiteSpace(videoId))
+            {
+                TempData["ErrorMessage"] =
+                    "Unable to remove the selected song.";
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            PlaylistItem? playlistItem =
                 _appData.PlaylistItems.FirstOrDefault(item =>
                     item.ProfileId == profileId.Value &&
                     item.VideoId == videoId);
@@ -143,7 +162,7 @@ namespace MusicPlaylistMvc.Controllers
             if (playlistItem == null)
             {
                 TempData["ErrorMessage"] =
-                    "Song was not found.";
+                    "The song was not found in your playlist.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -172,7 +191,7 @@ namespace MusicPlaylistMvc.Controllers
                 item.ProfileId == profileId.Value);
 
             TempData["SuccessMessage"] =
-                "Playlist cleared.";
+                "Your playlist has been cleared.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -194,7 +213,8 @@ namespace MusicPlaylistMvc.Controllers
                 return null;
             }
 
-            string host = uri.Host.ToLower();
+            string host =
+                uri.Host.ToLowerInvariant();
 
             // Example:
             // https://youtu.be/VIDEO_ID
@@ -205,24 +225,26 @@ namespace MusicPlaylistMvc.Controllers
                     uri.AbsolutePath.Trim('/'));
             }
 
-            // Only allow YouTube URLs.
-            if (host != "youtube.com" &&
-                host != "www.youtube.com" &&
-                host != "m.youtube.com" &&
-                host != "music.youtube.com")
+            bool validYouTubeHost =
+                host == "youtube.com" ||
+                host == "www.youtube.com" ||
+                host == "m.youtube.com" ||
+                host == "music.youtube.com";
+
+            if (!validYouTubeHost)
             {
                 return null;
             }
 
             // Example:
-            // https://youtube.com/watch?v=VIDEO_ID
+            // https://www.youtube.com/watch?v=VIDEO_ID
             if (uri.AbsolutePath.Equals(
                     "/watch",
                     StringComparison.OrdinalIgnoreCase))
             {
-                var queryValues =
-                    Microsoft.AspNetCore.WebUtilities
-                        .QueryHelpers.ParseQuery(uri.Query);
+                Dictionary<string, Microsoft.Extensions.Primitives.StringValues>
+                    queryValues =
+                        QueryHelpers.ParseQuery(uri.Query);
 
                 if (queryValues.TryGetValue(
                         "v",
@@ -234,18 +256,18 @@ namespace MusicPlaylistMvc.Controllers
             }
 
             // Examples:
-            // https://youtube.com/embed/VIDEO_ID
-            // https://youtube.com/shorts/VIDEO_ID
-            // https://youtube.com/live/VIDEO_ID
-            string[] pathParts = uri.AbsolutePath
-                .Split(
+            // /embed/VIDEO_ID
+            // /shorts/VIDEO_ID
+            // /live/VIDEO_ID
+            string[] pathParts =
+                uri.AbsolutePath.Split(
                     '/',
                     StringSplitOptions.RemoveEmptyEntries);
 
             if (pathParts.Length >= 2)
             {
                 string firstPart =
-                    pathParts[0].ToLower();
+                    pathParts[0].ToLowerInvariant();
 
                 if (firstPart == "embed" ||
                     firstPart == "shorts" ||
@@ -267,13 +289,14 @@ namespace MusicPlaylistMvc.Controllers
 
             videoId = videoId.Trim();
 
-            int parameterPosition =
-                videoId.IndexOfAny(new[] { '?', '&', '#' });
+            int extraParameterPosition =
+                videoId.IndexOfAny(
+                    new[] { '?', '&', '#' });
 
-            if (parameterPosition >= 0)
+            if (extraParameterPosition >= 0)
             {
                 videoId =
-                    videoId[..parameterPosition];
+                    videoId[..extraParameterPosition];
             }
 
             // Standard YouTube video IDs contain 11 characters.

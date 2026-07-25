@@ -1,22 +1,114 @@
-﻿@{
+﻿@model MusicPlaylist.Models.UserProfile
+
+@{
     ViewData["Title"] = "User Profile";
+
+    int playlistCount = ViewBag.PlaylistCount ?? 0;
 }
 
-<div class="container mt-4">
-    <h2>Profile Details</h2>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">Full Name:</dt>
-        <dd class="col-sm-9">@ViewBag.FullName</dd>
+<div class="container page-section">
 
-        <dt class="col-sm-3">Username:</dt>
-        <dd class="col-sm-9">@ViewBag.Username</dd>
+    <div class="row justify-content-center">
 
-        <dt class="col-sm-3">Playlist Count:</dt>
-        <dd class="col-sm-9">@ViewBag.PlaylistCount</dd>
-    </dl>
+        <div class="col-lg-8">
 
-    <form asp-controller="Account" asp-action="Logout" method="post">
-        <button type="submit" class="btn btn-danger">Logout</button>
-    </form>
+            <div class="profile-card">
+
+                <div class="profile-header">
+
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <div>
+                        <p class="section-label mb-1">
+                            MY PROFILE
+                        </p>
+
+                        <h1 class="h2 fw-bold mb-1">
+                            @Model.FullName
+                        </h1>
+
+                        <p class="text-secondary mb-0">
+                            @@Model.Username
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="profile-information">
+
+                    <div class="profile-info-item">
+                        <span>Profile ID</span>
+
+                        <strong>
+                            @Model.ProfileId
+                        </strong>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Full Name</span>
+
+                        <strong>
+                            @Model.FullName
+                        </strong>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Username</span>
+
+                        <strong>
+                            @Model.Username
+                        </strong>
+                    </div>
+
+                    <div class="profile-info-item">
+                        <span>Songs in Playlist</span>
+
+                        <strong>
+                            @playlistCount
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+
+                    <a asp-controller="Playlist"
+                       asp-action="Index"
+                       class="btn btn-primary-custom">
+
+                        <i class="bi bi-music-note-list"></i>
+                        My Playlist
+                    </a>
+
+                    <a asp-controller="Playlist"
+                       asp-action="Add"
+                       class="btn btn-outline-custom">
+
+                        <i class="bi bi-plus-circle"></i>
+                        Add Music
+                    </a>
+
+                    <form asp-controller="Account"
+                          asp-action="Logout"
+                          method="post">
+
+                        <button type="submit"
+                                class="btn btn-outline-danger">
+
+                            <i class="bi bi-box-arrow-right"></i>
+                            Logout
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MusicPlaylistMvc.Models
+namespace MusicPlaylist.Models
 {
     public class PlaylistItem
     {
@@ -16,6 +16,8 @@ namespace MusicPlaylistMvc.Models
         public string YouTubeUrl { get; set; } = string.Empty;
 
         public string EmbedUrl { get; set; } = string.Empty;
+
+        public string ThumbnailUrl { get; set; } = string.Empty;
 
         public DateTime DateAdded { get; set; } = DateTime.Now;
     }

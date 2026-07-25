@@ -1,5 +1,4 @@
 ﻿using MusicPlaylist.Models;
-using MusicPlaylistMvc.Models;
 
 namespace MusicPlaylistMvc.Services
 {

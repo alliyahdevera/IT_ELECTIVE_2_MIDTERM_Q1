@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="container mt-4">
+    <h2>Profile Details</h2>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Full Name:</dt>
+        <dd class="col-sm-9">@ViewBag.FullName</dd>
+
+        <dt class="col-sm-3">Username:</dt>
+        <dd class="col-sm-9">@ViewBag.Username</dd>
+
+        <dt class="col-sm-3">Playlist Count:</dt>
+        <dd class="col-sm-9">@ViewBag.PlaylistCount</dd>
+    </dl>
+
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</div>

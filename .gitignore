@@ -57,3 +57,4 @@ TestResult.xml
 nunit-*.xml
 /.idea/
 /ConsoleApp1/.vs/ConsoleApp1
+/ConsoleApp1/.vs/ProjectEvaluation

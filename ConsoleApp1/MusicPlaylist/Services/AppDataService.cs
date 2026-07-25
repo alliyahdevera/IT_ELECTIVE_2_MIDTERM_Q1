@@ -4,18 +4,14 @@ namespace MusicPlaylistMvc.Services
 {
     public class AppDataService
     {
-        // List of existing user accounts.
         public List<UserProfile> Profiles { get; set; } = new();
 
-        // Stores the personal playlist of every profile.
         public List<PlaylistItem> PlaylistItems { get; set; } = new();
 
-        // Stores songs and their overall play counts.
         public List<MusicVideo> MusicVideos { get; set; } = new();
 
         public AppDataService()
         {
-            // Sample accounts used by the Login page.
             Profiles.AddRange(new[]
             {
                 new UserProfile
@@ -29,16 +25,16 @@ namespace MusicPlaylistMvc.Services
                 new UserProfile
                 {
                     ProfileId = 2,
-                    FullName = "Althea Vallejos",
-                    Username = "althea",
+                    FullName = "Sophia Solis",
+                    Username = "soph",
                     Password = "password123"
                 },
 
                 new UserProfile
                 {
                     ProfileId = 3,
-                    FullName = "Clarisse Villamor",
-                    Username = "clarisse",
+                    FullName = "Kevin Roque",
+                    Username = "kev",
                     Password = "password123"
                 }
             });

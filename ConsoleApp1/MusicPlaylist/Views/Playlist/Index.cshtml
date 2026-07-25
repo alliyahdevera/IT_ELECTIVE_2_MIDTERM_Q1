@@ -1,4 +1,4 @@
-﻿@model List<MusicPlaylistMvc.Models.PlaylistItem>
+﻿@model List<MusicPlaylist.Models.PlaylistItem>
 
 @{
     ViewData["Title"] = "My Playlist";
@@ -238,26 +238,27 @@
         }
 
         function recordPlay(videoId) {
-            const body =
-                new URLSearchParams();
+            const token = document.querySelector(
+                '#antiForgeryForm input[name="__RequestVerificationToken"]'
+            ).value;
+
+            const body = new URLSearchParams();
 
             body.append("videoId", videoId);
+            body.append("__RequestVerificationToken", token);
 
             fetch('@Url.Action("RecordPlay", "Home")', {
                 method: "POST",
-
                 headers: {
                     "Content-Type":
                         "application/x-www-form-urlencoded"
                 },
-
                 credentials: "same-origin",
-
                 body: body.toString()
             })
-            .catch(error => {
-                console.error(error);
-            });
+                .catch(error => {
+                    console.error(error);
+                });
         }
     </script>
 }

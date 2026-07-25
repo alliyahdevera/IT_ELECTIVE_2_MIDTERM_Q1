@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicPlaylist.Models;
-using MusicPlaylistMvc.Services;
+using MusicPlaylist.Services;
 
 namespace MusicPlaylist.Controllers
 {
@@ -13,27 +13,35 @@ namespace MusicPlaylist.Controllers
             _appData = appData;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            int? profileId = HttpContext.Session.GetInt32("ProfileId");
+            int? profileId =
+                HttpContext.Session.GetInt32("ProfileId");
 
             if (profileId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var user = _appData.Profiles.FirstOrDefault(u => u.ProfileId == profileId);
+            UserProfile? user =
+                _appData.Profiles.FirstOrDefault(profile =>
+                    profile.ProfileId == profileId.Value);
 
             if (user == null)
             {
-                return NotFound();
+                HttpContext.Session.Clear();
+
+                return RedirectToAction("Login", "Account");
             }
 
-            ViewBag.FullName = user.FullName;
-            ViewBag.Username = user.Username;
-            ViewBag.PlaylistCount = user.PlaylistCount;
+            int playlistCount =
+                _appData.PlaylistItems.Count(item =>
+                    item.ProfileId == profileId.Value);
 
-            return View();
+            ViewBag.PlaylistCount = playlistCount;
+
+            return View(user);
         }
     }
 }

@@ -1,0 +1,87 @@
+﻿@model MusicPlaylist.Models.PlaylistItem
+
+@{
+    ViewData["Title"] = "Add Music";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="card bg-dark text-light border-secondary">
+                <div class="card-body p-4">
+
+                    <p class="section-label mb-1">
+                        NEW SONG
+                    </p>
+
+                    <h1 class="h2 fw-bold mb-2">
+                        Add Music
+                    </h1>
+
+                    <p class="text-secondary">
+                        Enter the song title and paste its YouTube URL.
+                    </p>
+
+                    <form asp-controller="Playlist"
+                          asp-action="Add"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3">
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="Title"
+                                   class="form-control"
+                                   placeholder="Enter the song title" />
+
+                            <span asp-validation-for="Title"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="YouTubeUrl"
+                                   class="form-label">
+                            </label>
+
+                            <input asp-for="YouTubeUrl"
+                                   class="form-control"
+                                   placeholder="https://www.youtube.com/watch?v=..." />
+
+                            <span asp-validation-for="YouTubeUrl"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit"
+                                    class="btn btn-primary-custom">
+                                <i class="bi bi-plus-circle"></i>
+                                Add to Playlist
+                            </button>
+
+                            <a asp-controller="Playlist"
+                               asp-action="Index"
+                               class="btn btn-outline-light">
+                                Cancel
+                            </a>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

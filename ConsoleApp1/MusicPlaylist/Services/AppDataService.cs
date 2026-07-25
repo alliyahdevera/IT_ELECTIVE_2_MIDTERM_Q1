@@ -1,14 +1,14 @@
 ﻿using MusicPlaylist.Models;
 
-namespace MusicPlaylistMvc.Services
+namespace MusicPlaylist.Services
 {
     public class AppDataService
     {
-        public List<UserProfile> Profiles { get; set; } = new();
+        public List<UserProfile> Profiles { get; } = new();
 
-        public List<PlaylistItem> PlaylistItems { get; set; } = new();
+        public List<PlaylistItem> PlaylistItems { get; } = new();
 
-        public List<MusicVideo> MusicVideos { get; set; } = new();
+        public List<MusicVideo> MusicVideos { get; } = new();
 
         public AppDataService()
         {
@@ -21,7 +21,6 @@ namespace MusicPlaylistMvc.Services
                     Username = "alliyah",
                     Password = "password123"
                 },
-
                 new UserProfile
                 {
                     ProfileId = 2,
@@ -29,7 +28,6 @@ namespace MusicPlaylistMvc.Services
                     Username = "soph",
                     Password = "password123"
                 },
-
                 new UserProfile
                 {
                     ProfileId = 3,

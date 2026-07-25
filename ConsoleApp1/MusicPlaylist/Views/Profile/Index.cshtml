@@ -1,22 +1,89 @@
-﻿@{
+﻿@model MusicPlaylist.Models.UserProfile
+
+@{
     ViewData["Title"] = "User Profile";
+
+    int playlistCount = ViewBag.PlaylistCount ?? 0;
 }
 
-<div class="container mt-4">
-    <h2>Profile Details</h2>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">Full Name:</dt>
-        <dd class="col-sm-9">@ViewBag.FullName</dd>
+<div class="container py-5">
 
-        <dt class="col-sm-3">Username:</dt>
-        <dd class="col-sm-9">@ViewBag.Username</dd>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-        <dt class="col-sm-3">Playlist Count:</dt>
-        <dd class="col-sm-9">@ViewBag.PlaylistCount</dd>
-    </dl>
+            <div class="card bg-dark text-light border-secondary">
+                <div class="card-body p-4">
 
-    <form asp-controller="Account" asp-action="Logout" method="post">
-        <button type="submit" class="btn btn-danger">Logout</button>
-    </form>
+                    <p class="section-label mb-1">
+                        MY PROFILE
+                    </p>
+
+                    <h1 class="h2 fw-bold mb-4">
+                        Profile Details
+                    </h1>
+
+                    <dl class="row mb-4">
+
+                        <dt class="col-sm-4">
+                            Profile ID
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.ProfileId
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Full Name
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.FullName
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Username
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @Model.Username
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            Playlist Count
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            @playlistCount
+                        </dd>
+
+                    </dl>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a asp-controller="Playlist"
+                           asp-action="Index"
+                           class="btn btn-primary-custom">
+                            <i class="bi bi-music-note-list"></i>
+                            My Playlist
+                        </a>
+
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post">
+
+                            <button type="submit"
+                                    class="btn btn-outline-danger">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>

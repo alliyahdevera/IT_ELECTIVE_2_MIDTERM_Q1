@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MusicPlaylist.Models;
-using MusicPlaylistMvc.Services;
+using MusicPlaylist.Services;
 
-namespace MusicPlaylistMvc.Controllers
+namespace MusicPlaylist.Controllers
 {
     public class HomeController : Controller
     {
@@ -13,17 +13,19 @@ namespace MusicPlaylistMvc.Controllers
             _appData = appData;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
-            int? profileId = HttpContext.Session.GetInt32("ProfileId");
+            int? profileId =
+                HttpContext.Session.GetInt32("ProfileId");
 
             if (profileId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
 
-            var currentProfile = _appData.Profiles
-                .FirstOrDefault(profile =>
+            UserProfile? currentProfile =
+                _appData.Profiles.FirstOrDefault(profile =>
                     profile.ProfileId == profileId.Value);
 
             if (currentProfile == null)
@@ -33,23 +35,20 @@ namespace MusicPlaylistMvc.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var topSongs = _appData.MusicVideos
-                .Where(song => song.PlayCount > 0)
-                .OrderByDescending(song => song.PlayCount)
-                .ThenBy(song => song.Title)
-                .Take(5)
-                .ToList();
+            List<MusicVideo> topSongs =
+                _appData.MusicVideos
+                    .Where(song => song.PlayCount > 0)
+                    .OrderByDescending(song => song.PlayCount)
+                    .ThenBy(song => song.Title)
+                    .Take(5)
+                    .ToList();
 
-            var viewModel = new HomeViewModel
+            HomeViewModel viewModel = new()
             {
                 ProfileName = currentProfile.FullName,
-
                 TopSongs = topSongs,
-
                 TotalProfiles = _appData.Profiles.Count,
-
                 TotalSongs = _appData.MusicVideos.Count,
-
                 TotalStreams = _appData.MusicVideos.Sum(
                     song => song.PlayCount)
             };
@@ -58,9 +57,11 @@ namespace MusicPlaylistMvc.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult RecordPlay(string videoId)
         {
-            int? profileId = HttpContext.Session.GetInt32("ProfileId");
+            int? profileId =
+                HttpContext.Session.GetInt32("ProfileId");
 
             if (profileId == null)
             {
@@ -72,8 +73,8 @@ namespace MusicPlaylistMvc.Controllers
                 return BadRequest();
             }
 
-            var song = _appData.MusicVideos
-                .FirstOrDefault(item =>
+            MusicVideo? song =
+                _appData.MusicVideos.FirstOrDefault(item =>
                     item.VideoId == videoId);
 
             if (song == null)
@@ -89,6 +90,22 @@ namespace MusicPlaylistMvc.Controllers
                 playCount = song.PlayCount
             });
         }
-    }
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(
+            Duration = 0,
+            Location = ResponseCacheLocation.None,
+            NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel
+            {
+                RequestId = HttpContext.TraceIdentifier
+            });
+        }
+    }
 }

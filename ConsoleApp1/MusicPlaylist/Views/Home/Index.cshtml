@@ -24,10 +24,10 @@
                 </p>
 
                 <div class="d-flex flex-wrap gap-3">
-                    <a asp-controller="Music"
-                       asp-action="Search"
+                    <a asp-controller="Playlist"
+                       asp-action="Add"
                        class="btn btn-primary-custom">
-                        Search Music
+                        Add Music
                     </a>
 
                     <a asp-controller="Playlist"
@@ -127,10 +127,10 @@
                     Top 5 ranking.
                 </p>
 
-                <a asp-controller="Music"
-                   asp-action="Search"
+                <a asp-controller="Playlist"
+                   asp-action="Add"
                    class="btn btn-primary-custom">
-                    Find Music
+                    Add Music
                 </a>
             </div>
         }
@@ -157,7 +157,11 @@
                         <div class="song-details">
                             <h4>@song.Title</h4>
 
-                            <p>@song.ChannelTitle</p>
+                            <a href="@song.YouTubeUrl"
+                               target="_blank"
+                               rel="noopener noreferrer">
+                                Watch on YouTube
+                            </a>
                         </div>
 
                         <div class="play-count">

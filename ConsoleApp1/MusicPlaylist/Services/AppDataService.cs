@@ -32,7 +32,7 @@ namespace MusicPlaylist.Services
                 {
                     ProfileId = 3,
                     FullName = "Kevin Roque",
-                    Username = "kev",
+                    Username = "kcer",
                     Password = "password123"
                 }
             });

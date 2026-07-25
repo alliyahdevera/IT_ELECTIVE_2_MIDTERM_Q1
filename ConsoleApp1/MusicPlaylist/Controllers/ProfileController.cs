@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MusicPlaylist.Models;
+using MusicPlaylistMvc.Services;
 
 namespace MusicPlaylist.Controllers
 {
     public class ProfileController : Controller
     {
-        private readonly AppData _appData;
+        private readonly AppDataService _appData;
 
-        public ProfileController(AppData appData)
+        public ProfileController(AppDataService appData)
         {
             _appData = appData;
         }

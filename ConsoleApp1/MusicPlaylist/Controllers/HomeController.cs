@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MusicPlaylist.Models;
-using MusicPlaylistMvc.Models;
 using MusicPlaylistMvc.Services;
 
 namespace MusicPlaylistMvc.Controllers
